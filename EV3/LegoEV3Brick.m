@@ -1,15 +1,19 @@
-classdef LegoEV3Brick_USB < matlab.System
-    % LegoEV3Brick Connects to an EV3Brick and its motor over USB
+classdef LegoEV3Brick < matlab.System
+    % LegoEV3Brick Connects to an EV3Brick and its motor over WiFi
     %
     % This template includes the minimum set of functions required
     % to define a System object with discrete state.
 
     % Public, tunable properties
     properties
+        
     end
 
     properties (Nontunable)
+        address = '127.0.0.1'
         motorport = 'A'
+        id = '00165340e49b'
+        retry_attempts = 5;
     end
 
     properties(DiscreteState)
@@ -25,10 +29,21 @@ classdef LegoEV3Brick_USB < matlab.System
     methods(Access = protected)
         function setupImpl(obj)
             % Initialise connection to EV3 brick
-            obj.connection = legoev3('USB');
+            cntr = 0;
+            while (exist('myev3') == 0) && (cntr < obj.retry_attempts)
+                try
+                    myev3 = legoev3('WiFi',obj.address,obj.id);
+                catch
+                    disp('Retrying connection to EV3')
+                    cntr = cntr+1;
+                end
+            end
+
+            obj.connection = myev3;
             % Initialise motor connection
             obj.motor_handle = motor(obj.connection,obj.motorport);
             obj.motor_handle.Speed = 0;
+            resetRotation(obj.motor_handle);
             start(obj.motor_handle);
         end
        
@@ -43,11 +58,8 @@ classdef LegoEV3Brick_USB < matlab.System
             obj.motor_handle.Speed = SpeedInput;
 
             % Assign outputs
-            motorspeed = SpeedInput;
-            motorpos = readRotation(obj.motor_handle);
-
-            motorout(1,1) = motorpos;
-            motorout(1,2) = motorspeed;
+            motorout(1,2) = SpeedInput;
+            motorout(1,1) = readRotation(obj.motor_handle);
         end
 
         function resetImpl(obj)
@@ -56,8 +68,9 @@ classdef LegoEV3Brick_USB < matlab.System
 
         function releaseImpl(obj)
             % Release resources, such as file handles
-
             stop(obj.motor_handle);
+            clear obj
+            clear myev3
         end
 
         function num = getNumOutputsImpl(obj)
@@ -75,7 +88,7 @@ classdef LegoEV3Brick_USB < matlab.System
         end
 
         function dataout = getOutputDataTypeImpl(~)
-         dataout = 'int32';
+         dataout = 'double';
         end
 
         function cplxout = isOutputComplexImpl(~)
