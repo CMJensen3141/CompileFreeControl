@@ -47,7 +47,7 @@ classdef LegoEV3Brick < matlab.System
             start(obj.motor_handle);
         end
        
-        function motorout = stepImpl(obj,SpeedInput)
+        function [AngPos,SpeedInput] = stepImpl(obj,SpeedInput)
             % Implement algorithm. Calculate y as a function of input u and
             % discrete states.
 
@@ -58,8 +58,9 @@ classdef LegoEV3Brick < matlab.System
             obj.motor_handle.Speed = SpeedInput;
 
             % Assign outputs
-            motorout(1,2) = SpeedInput;
-            motorout(1,1) = readRotation(obj.motor_handle);
+            SpeedInput = SpeedInput;
+            AngPos = readRotation(obj.motor_handle);
+            AngPos = double(AngPos);
         end
 
         function resetImpl(obj)
@@ -76,27 +77,27 @@ classdef LegoEV3Brick < matlab.System
         function num = getNumOutputsImpl(obj)
             % Define total number of outputs for system with optional
             % outputs
-            num = 1;
+            num = 2;
             % if obj.UseOptionalOutput
             %     num = 2;
             % end
         end
         
-        function [sz_1] = getOutputSizeImpl(obj)
-            outsz = 2;
-            sz_1 = [1 outsz];
+        function [sz_1, sz_2] = getOutputSizeImpl(obj)
+            sz_1 = [1 1];
+            sz_2 = [1 1];
         end
 
-        function dataout = getOutputDataTypeImpl(~)
-         dataout = 'double';
+        function [type_1, type_2] = getOutputDataTypeImpl(~)
+         type_1 = 'double'; type_2 = 'double';
         end
 
-        function cplxout = isOutputComplexImpl(~)
-         cplxout = false;
+        function [cplxout_1, cplxout_2] = isOutputComplexImpl(~)
+         cplxout_1 = false; cplxout_2 = false;
         end
 
-        function fixedout = isOutputFixedSizeImpl(~)
-         fixedout = true;
+        function [fx_1, fx_2] = isOutputFixedSizeImpl(~)
+         fx_1 = true; fx_2 = true;
         end
             
     end

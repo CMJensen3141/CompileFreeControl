@@ -8,3 +8,7 @@ DEPENDENCIES:
 - The Lego EV3 Hardware Support from MATLAB package is required to run LegoEV3 examples (https://se.mathworks.com/hardware-support/lego-mindstorms-ev3-matlab.html)
 - CasADi is required to run MPC examples (https://web.casadi.org/)
 
+NOTA BENE:
+
+- The Interpreted Matlab Function MPC example will become deprecated in the future as Matlab are removing support for this block.
+

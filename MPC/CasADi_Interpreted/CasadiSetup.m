@@ -44,7 +44,7 @@ C = [0.0217 0]; D = 0;
 
 %% Convert
 csys = ss(A,B,C,D);
-dsys = c2d(csys,dt);
+dsys = c2d(csys,dt,'Tustin');
 
 A = dsys.A; B = dsys.B; C = dsys.C;
 
