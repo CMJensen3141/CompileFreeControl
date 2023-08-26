@@ -11,4 +11,7 @@ DEPENDENCIES:
 NOTA BENE:
 
 - The Interpreted Matlab Function MPC example will become deprecated in the future as Matlab are removing support for this block.
+- The DummyServer executable is a very simple localhosted Modbus server written in Rust using the rodbus framework (https://stepfunc.io/) and intended for debugging of Modbus examples.
+	- The IP address is 127.0.0.1 and the port number is 5020, which are also the defaults for the Modbus TCP client block in Matlab.
+- I may build a Modbus RTU server for the same purpose at some point, but zero guarantees.
 
